@@ -1,0 +1,51 @@
+name: Development workflow
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop]
+    branches-ignore: [non-existent]
+
+env:
+  COURSE: FT
+
+jobs:
+  build job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Say hi
+        run: echo 'Everybody say hiii!'
+      - name: Say course from env variable
+        run: echo 'Welcome to course ${{env.COURSE}}'
+
+  test job:
+    needs: [build job]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test
+        run: echo 'Test!'
+
+  macos job:
+    runs-on: macos-latest
+    steps:
+      - name: Say bye
+        run: echo 'Bye bye!'
+        if: startsWith('Mac', 'Mac OS') #condition to stop the job
+
+  greet job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hello using action
+        uses: actions/hello-world-javascript-action@master
+        with:
+          who-to-greet: 'FT students' #argument to run with action
+
+  docker image job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run in container
+        uses: docker://ubuntu:latest
+        args: start #input to docker container
